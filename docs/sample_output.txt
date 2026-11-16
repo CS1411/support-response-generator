@@ -1,0 +1,16 @@
+$ python -m app.cli suggest thanks for
+next words: contacting (0.49), your (0.45)
+draft     : thanks for contacting us
+
+$ python -m app.cli suggest i have checked order
+next words: orderid (0.89)
+draft     : i have checked order orderid and it will ship within two business days
+
+$ python -m app.cli suggest your refund
+next words: for (0.80)
+draft     : your refund for order orderid and it will ship within two business days
+
+$ python -m app.cli suggest please reply to
+next words: emailaddr (0.79)
+draft     : please reply to emailaddr so you can send the item back
+
