@@ -20,7 +20,7 @@ Tick these off as you go, and commit after each one.
       Hint: Use the n-gram model and smoothing techniques learned in the drill.
 - [x] **3. Create a text generation function to suggest response continuations.**  
       Hint: Apply your n-gram model to predict the most probable next words.
-- [ ] **4. Build a command-line interface for agents to get suggestions.**  
+- [x] **4. Build a command-line interface for agents to get suggestions.**  
       Hint: Design a simple CLI to input partial responses and display predictions.
 
 ## Run it

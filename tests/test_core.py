@@ -31,3 +31,10 @@ def test_milestone_3_suggestions_and_continuation():
     assert [w for w, _ in top] == ["coffee", "tea"] and top[0][1] > top[1][1]
     assert suggest_next(m, "zzz unknown") == []
     assert continue_text(m, "i drink") == "i drink coffee"
+
+
+def test_milestone_4_cli_suggest(capsys):
+    from app.cli import main
+    main(["suggest", "your", "refund", "-k", "2"])
+    out = capsys.readouterr().out
+    assert "next words:" in out and "draft" in out
