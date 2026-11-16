@@ -1,24 +1,33 @@
-"""Your code. One stub per milestone; build them in order and keep each one small."""
+"""Core logic: corpus preparation, n-gram model with smoothing, suggestions."""
+import math
+import re
+from collections import Counter, defaultdict
+from pathlib import Path
 
-# --- Milestone 1: Prepare an anonymized corpus of customer support interactions.
-# Hint: Focus on tokenization and cleaning the text for your corpus.
-def milestone_1():  # TODO(milestone 1)
-    raise NotImplementedError("TODO(milestone 1)")
-
-
-# --- Milestone 2: Implement the n-gram model with smoothing.
-# Hint: Use the n-gram model and smoothing techniques learned in the drill.
-def milestone_2():  # TODO(milestone 2)
-    raise NotImplementedError("TODO(milestone 2)")
+CORPUS_PATH = Path(__file__).resolve().parent.parent / "corpus" / "support.txt"
 
 
-# --- Milestone 3: Create a text generation function to suggest response continuations.
-# Hint: Apply your n-gram model to predict the most probable next words.
-def milestone_3():  # TODO(milestone 3)
-    raise NotImplementedError("TODO(milestone 3)")
+# --- Milestone 1: prepare an anonymized corpus of support interactions.
+def clean_text(text: str) -> str:
+    """Mask personal details, lowercase, and collapse whitespace."""
+    text = re.sub(r"\S+@\S+", "emailaddr", text)
+    text = re.sub(r"\b\d{3}-\d{3}-\d{4}\b", "phonenum", text)
+    text = re.sub(r"#\d+", "orderid", text)
+    return re.sub(r"[ \t]+", " ", text).strip().lower()
 
 
-# --- Milestone 4: Build a command-line interface for agents to get suggestions.
-# Hint: Design a simple CLI to input partial responses and display predictions.
-def milestone_4():  # TODO(milestone 4)
-    raise NotImplementedError("TODO(milestone 4)")
+def to_sentences(text: str) -> list[str]:
+    return [s.strip() for s in re.split(r"[.!?\n]+", text) if s.strip()]
+
+
+def to_tokens(sentence: str) -> list[str]:
+    return re.findall(r"[a-z']+", sentence.lower())
+
+
+def build_corpus(raw_lines: list[str]) -> list[str]:
+    """Anonymize raw support replies and return one cleaned reply per line."""
+    return [clean_text(line) for line in raw_lines if line.strip()]
+
+
+def load_corpus(path: Path = CORPUS_PATH) -> list[str]:
+    return [line for line in path.read_text().splitlines() if line.strip()]

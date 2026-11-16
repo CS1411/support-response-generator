@@ -14,7 +14,7 @@ This Support Response Generator is a CLI tool designed for retail customer suppo
 
 Tick these off as you go, and commit after each one.
 
-- [ ] **1. Prepare an anonymized corpus of customer support interactions.**  
+- [x] **1. Prepare an anonymized corpus of customer support interactions.**  
       Hint: Focus on tokenization and cleaning the text for your corpus.
 - [ ] **2. Implement the n-gram model with smoothing.**  
       Hint: Use the n-gram model and smoothing techniques learned in the drill.
