@@ -11,3 +11,13 @@ def test_milestone_1_corpus_is_anonymized_and_tokenized():
     assert not any(p in joined for p in ("@", "#1", "555-"))
     assert to_tokens("Order orderid, please!") == ["order", "orderid", "please"]
     assert len(load_corpus()) >= 100
+from app.core import NgramModel
+
+
+
+def test_milestone_2_smoothing_gives_unseen_words_probability():
+    m = NgramModel(n=2, k=0.5).fit(["i drink coffee", "i drink tea"])
+    ctx = ("drink",)
+    assert m.prob(ctx, "coffee") > m.prob(ctx, "water") > 0
+    assert abs(sum(m.prob(ctx, w) for w in m.vocab) - 1) < 1e-9
+    assert m.perplexity(["i drink coffee"]) < m.perplexity(["coffee drink i"])

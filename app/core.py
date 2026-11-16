@@ -31,3 +31,40 @@ def build_corpus(raw_lines: list[str]) -> list[str]:
 
 def load_corpus(path: Path = CORPUS_PATH) -> list[str]:
     return [line for line in path.read_text().splitlines() if line.strip()]
+
+
+# --- Milestone 2: n-gram model with add-k smoothing.
+class NgramModel:
+    """Counts n-grams and gives smoothed next-word probabilities."""
+
+    def __init__(self, n: int = 3, k: float = 0.1):
+        self.n, self.k = n, k
+        self.counts: dict[tuple, Counter] = defaultdict(Counter)
+        self.vocab: set[str] = {"</s>"}
+
+    def _padded(self, sentence: str) -> list[str]:
+        return ["<s>"] * (self.n - 1) + to_tokens(sentence) + ["</s>"]
+
+    def fit(self, lines: list[str]) -> "NgramModel":
+        for line in lines:
+            for sent in to_sentences(line):
+                toks = self._padded(sent)
+                self.vocab.update(toks[self.n - 1:])
+                for i in range(len(toks) - self.n + 1):
+                    self.counts[tuple(toks[i:i + self.n - 1])][toks[i + self.n - 1]] += 1
+        return self
+
+    def prob(self, context: tuple, word: str) -> float:
+        c = self.counts.get(context, Counter())
+        return (c[word] + self.k) / (sum(c.values()) + self.k * len(self.vocab))
+
+    def perplexity(self, lines: list[str]) -> float:
+        log_sum, total = 0.0, 0
+        for line in lines:
+            for sent in to_sentences(line):
+                toks = self._padded(sent)
+                for i in range(len(toks) - self.n + 1):
+                    ctx, w = tuple(toks[i:i + self.n - 1]), toks[i + self.n - 1]
+                    log_sum += math.log(self.prob(ctx, w))
+                    total += 1
+        return math.exp(-log_sum / total)
