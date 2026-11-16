@@ -1,0 +1,7 @@
+held-out perplexity (80/20 split of the corpus, lower is better)
+n=2 k=1.0     4.52
+n=2 k=0.1     2.58
+n=2 k=0.01    2.34
+n=3 k=1.0     3.84
+n=3 k=0.1     1.79
+n=3 k=0.01    1.55

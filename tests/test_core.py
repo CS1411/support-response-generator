@@ -38,3 +38,9 @@ def test_milestone_4_cli_suggest(capsys):
     main(["suggest", "your", "refund", "-k", "2"])
     out = capsys.readouterr().out
     assert "next words:" in out and "draft" in out
+
+
+def test_evaluation_prefers_more_context_and_less_smoothing():
+    from app.evaluate import evaluate
+    pp = {(n, k): v for n, k, v in evaluate()}
+    assert pp[(3, 0.01)] < pp[(2, 0.01)] < pp[(2, 1.0)]
