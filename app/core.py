@@ -68,3 +68,28 @@ class NgramModel:
                     log_sum += math.log(self.prob(ctx, w))
                     total += 1
         return math.exp(-log_sum / total)
+
+
+# --- Milestone 3: suggest next words and continue a partial response.
+def _context(model: NgramModel, prefix: str) -> tuple:
+    toks = ["<s>"] * (model.n - 1) + to_tokens(prefix)
+    return tuple(toks[-(model.n - 1):]) if model.n > 1 else ()
+
+
+def suggest_next(model: NgramModel, prefix: str, top_k: int = 3) -> list[tuple[str, float]]:
+    """Most likely next words after `prefix`, as (word, probability). Never suggests end-of-sentence."""
+    ctx = _context(model, prefix)
+    seen = model.counts.get(ctx, Counter())
+    words = [w for w, _ in seen.most_common() if w != "</s>"][:top_k]
+    return [(w, model.prob(ctx, w)) for w in words]
+
+
+def continue_text(model: NgramModel, prefix: str, max_words: int = 12) -> str:
+    """Greedily extend `prefix` one most-likely word at a time."""
+    text = prefix.lower().strip()
+    for _ in range(max_words):
+        best = suggest_next(model, text, top_k=1)
+        if not best:
+            break
+        text = f"{text} {best[0][0]}".strip()
+    return text

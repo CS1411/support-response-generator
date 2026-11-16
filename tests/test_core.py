@@ -21,3 +21,13 @@ def test_milestone_2_smoothing_gives_unseen_words_probability():
     assert m.prob(ctx, "coffee") > m.prob(ctx, "water") > 0
     assert abs(sum(m.prob(ctx, w) for w in m.vocab) - 1) < 1e-9
     assert m.perplexity(["i drink coffee"]) < m.perplexity(["coffee drink i"])
+from app.core import continue_text, suggest_next
+
+
+
+def test_milestone_3_suggestions_and_continuation():
+    m = NgramModel(n=2, k=0.1).fit(["i drink coffee", "i drink coffee", "i drink tea"])
+    top = suggest_next(m, "i drink", top_k=2)
+    assert [w for w, _ in top] == ["coffee", "tea"] and top[0][1] > top[1][1]
+    assert suggest_next(m, "zzz unknown") == []
+    assert continue_text(m, "i drink") == "i drink coffee"
